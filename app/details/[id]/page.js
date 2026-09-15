@@ -143,11 +143,15 @@ export default function RecipeDetailsPage() {
       : recipe.title?.en || recipe.title?.bn || "Recipe Details";
 
   // Fixed Image URL Generator
+// Fixed Image URL Generator with Debugging
   const getImageUrl = (recipeObj) => {
     const fallbackImage =
       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80";
 
     const imagePath = recipeObj?.image || recipeObj?.imageUrl || recipeObj?.img;
+
+    console.log("Recipe Object:", recipeObj); // ব্রাউজারে অবজেক্ট চেক করার জন্য
+    console.log("Extracted Image Path:", imagePath); // ডাটাবেজে কি পাথ আছে দেখার জন্য
 
     if (
       !imagePath ||
@@ -166,8 +170,12 @@ export default function RecipeDetailsPage() {
       const API_BASE = (
         process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"
       ).replace(/\/$/, "");
+      
       const cleanPath = imagePath.replace(/\\/g, "/").replace(/^\//, "");
-      return `${API_BASE}/${cleanPath}`;
+      const finalUrl = `${API_BASE}/${cleanPath}`;
+      
+      console.log("Generated Final Image URL:", finalUrl); // ফাইনাল ইউআরএল দেখতে পারবেন
+      return finalUrl;
     } catch (err) {
       return fallbackImage;
     }

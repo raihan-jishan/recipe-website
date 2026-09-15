@@ -61,6 +61,8 @@ export default function CookingPage() {
     const fallbackImage =
       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80";
 
+    console.log("Passed imagePath to getImageUrl:", imagePath); // চেক করার জন্য
+
     if (
       !imagePath ||
       typeof imagePath !== "string" ||
@@ -74,11 +76,17 @@ export default function CookingPage() {
     }
 
     try {
+      // API_URL এবং SERVER_URL দুটোই যাতে কাজ করে
       const API_BASE = (
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+        process.env.NEXT_PUBLIC_SERVER_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:5000"
       ).replace(/\/$/, "");
+      
       const cleanPath = imagePath.replace(/\\/g, "/").replace(/^\//, "");
-      return `${API_BASE}/${cleanPath}`;
+      const finalUrl = `${API_BASE}/${cleanPath}`;
+      console.log("Generated Image URL:", finalUrl); // ফাইনাল লিংকটি কনসোলে দেখাবে
+      return finalUrl;
     } catch (err) {
       return fallbackImage;
     }
@@ -91,7 +99,7 @@ export default function CookingPage() {
       try {
         setLoading(true);
         const API_BASE = (
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"
         ).replace(/\/$/, "");
         const response = await fetch(`${API_BASE}/api/recipes?lang=${lang}`);
 
