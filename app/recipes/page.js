@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Utensils, Loader2, ChefHat, RotateCw } from "lucide-react";
 import { RecipeCard } from "@/components/ui/card";
 
-const page = () => {
+function RecipeSearchContent() {
   const searchParams = useSearchParams();
   const ingredientsParam = searchParams.get("ingredients");
 
@@ -23,7 +23,6 @@ const page = () => {
 
       setLoading(true);
 
-      // URL param (e.g. ?ingredients=Egg,Potato) থেকে array তৈরি করা
       const ingredients = ingredientsParam
         .split(",")
         .map((item) => item.trim())
@@ -52,7 +51,6 @@ const page = () => {
     fetchRecipes();
   }, [ingredientsParam]);
 
-  // Helper functions
   const getTitle = (recipe) => {
     if (!recipe?.title) return "Untitled Recipe";
     if (typeof recipe.title === "string") return recipe.title;
@@ -76,9 +74,9 @@ const page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50  p-6 md:p-8 text-slate-800 dark:text-slate-100">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-8 text-slate-800 dark:text-slate-100">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-2xl font-bold mb-6 font-comfortaa text-slate-900  flex items-center gap-2">
+        <h3 className="text-2xl font-bold mb-6 font-comfortaa text-slate-900 flex items-center gap-2">
           <span>Matching Recipes</span>
         </h3>
 
@@ -94,11 +92,14 @@ const page = () => {
 
         {/* Empty State */}
         {!loading && recipes.length === 0 && (
-          <div className="text-center py-16   rounded-3xl">
-            <p className="text-slate-900  font-medium text-xl ">
+          <div className="text-center py-16 rounded-3xl">
+            <p className="text-slate-900 font-medium text-xl">
               No recipes found with these ingredients. Try adding more items!
             </p>
-            <button className="p-3 px-5 font-medium font-comfortaa bg-black text-white rounded-full mt-4  hover:opacity-95 cursor-pointer">
+            <button 
+              onClick={() => window.location.reload()}
+              className="p-3 px-5 font-medium font-comfortaa bg-black text-white rounded-full mt-4 hover:opacity-95 cursor-pointer"
+            >
               <div className="flex items-center gap-2 p-2">
                 <RotateCw className="w-4 h-4" /> Try Again.
               </div>
@@ -111,7 +112,7 @@ const page = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {recipes.map((recipe, index) => (
               <RecipeCard
-                key={index}
+                key={recipe._id || index}
                 id={recipe._id}
                 recipe={recipe}
                 getTitle={getTitle}
@@ -124,6 +125,16 @@ const page = () => {
       </div>
     </div>
   );
-};
+}
 
-export default page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+      </div>
+    }>
+      <RecipeSearchContent />
+    </Suspense>
+  );
+}
