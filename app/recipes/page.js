@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Utensils, Loader2, ChefHat, RotateCw } from "lucide-react";
 import { RecipeCard } from "@/components/ui/card";
 
-const RecipeSearchPage = () => {
+const page = () => {
   const searchParams = useSearchParams();
   const ingredientsParam = searchParams.get("ingredients");
 
@@ -96,7 +96,7 @@ const RecipeSearchPage = () => {
         {!loading && recipes.length === 0 && (
           <div className="text-center py-16   rounded-3xl">
             <p className="text-slate-900  font-medium text-xl ">
-              No recipes found with these ingredients. Try adding more items! 
+              No recipes found with these ingredients. Try adding more items!
             </p>
             <button className="p-3 px-5 font-medium font-comfortaa bg-black text-white rounded-full mt-4  hover:opacity-95 cursor-pointer">
               <div className="flex items-center gap-2 p-2">
@@ -126,4 +126,4 @@ const RecipeSearchPage = () => {
   );
 };
 
-export default RecipeSearchPage;
+export default page;
