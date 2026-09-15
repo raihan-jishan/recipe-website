@@ -33,7 +33,7 @@ const MobileNav = () => {
     { icon: <House strokeWidth={2.5} />, path: "/" },
     { icon: <CookingPot />, path: "/by-ingredients" },
     { icon: <Bookmark />, path: "/user/bookmark" },
-    { icon: <UserRound />, path: "/profile" },
+    { icon: <UserRound />, path: "/user/dashboard" },
   ];
 
   const pathname = usePathname();

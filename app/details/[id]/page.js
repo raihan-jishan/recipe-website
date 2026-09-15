@@ -62,7 +62,9 @@ export default function RecipeDetailsPage() {
     const fetchRecipeDetails = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/recipes`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/recipes`,
+        );
 
         if (!res.ok) {
           throw new Error("Failed to fetch recipes");
@@ -100,6 +102,7 @@ export default function RecipeDetailsPage() {
       setIsSaved(isRecipeBookmarked(targetId));
     }
   }, [id, recipe]);
+
   const handleBookmarkClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -108,6 +111,7 @@ export default function RecipeDetailsPage() {
     const savedState = toggleBookmark(recipe);
     setIsSaved(savedState);
   };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
@@ -138,11 +142,13 @@ export default function RecipeDetailsPage() {
       ? recipe.title
       : recipe.title?.en || recipe.title?.bn || "Recipe Details";
 
-  const getImageUrl = (imagePath) => {
+  // Fixed Image URL Generator
+  const getImageUrl = (recipeObj) => {
     const fallbackImage =
       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80";
 
-    // ডাটা না থাকলে বা খালি স্ট্রিং হলে সরাসরি ফলব্যাক ইউআরএল দেবে
+    const imagePath = recipeObj?.image || recipeObj?.imageUrl || recipeObj?.img;
+
     if (
       !imagePath ||
       typeof imagePath !== "string" ||
@@ -151,14 +157,14 @@ export default function RecipeDetailsPage() {
       return fallbackImage;
     }
 
-    // যদি ইতোমধ্যেই পূর্ণাঙ্গ URL (http/https) হয়ে থাকে
+    // যদি ইতোমধ্যেই পূর্ণাঙ্গ URL (http/https) হয়ে থাকে
     if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
       return imagePath;
     }
 
     try {
       const API_BASE = (
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+        process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"
       ).replace(/\/$/, "");
       const cleanPath = imagePath.replace(/\\/g, "/").replace(/^\//, "");
       return `${API_BASE}/${cleanPath}`;
@@ -171,7 +177,7 @@ export default function RecipeDetailsPage() {
     recipe.cookTime || recipe.prepTime || recipe.cookingTime || "20";
   const difficulty = recipe.difficulty || "Medium";
   const calories = recipe.calories || recipe.cal || "450";
-  const servings = recipe.servings || recipe.servings || "1";
+  const servings = recipe.servings || "1";
   const rating = recipe.rating || "4.5";
   const description =
     recipe.description || "A delicious recipe prepared with fresh ingredients.";
@@ -181,7 +187,6 @@ export default function RecipeDetailsPage() {
     if (!name) return <Utensils className="w-5 h-5 text-amber-500" />;
     const lowerName = name.toLowerCase();
 
-    // check the icon name wise
     const matchedKey = Object.keys(ingredientIconMap).find((key) =>
       lowerName.includes(key),
     );
@@ -205,12 +210,12 @@ export default function RecipeDetailsPage() {
           <button
             type="button"
             onClick={handleBookmarkClick}
-            className="absolute top-4 right-4 z-30 p-3 rounded-full bg-black/30 hover:bg-gray-400/20 backdrop-blur-md text-white transition-all duration-300 active:scale-90 cursor-pointer border border-white/20 shadow-lg bg-em4"
+            className="absolute top-4 right-4 z-30 p-3 rounded-full bg-black/30 hover:bg-gray-400/20 backdrop-blur-md text-white transition-all duration-300 active:scale-90 cursor-pointer border border-white/20 shadow-lg"
             aria-label="Bookmark Recipe"
           >
             <Bookmark
               size={30}
-              className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110  ${
+              className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${
                 isSaved ? "fill-[#00A86B] text-[#00A86B]" : "text-white"
               }`}
             />
@@ -223,10 +228,8 @@ export default function RecipeDetailsPage() {
           <div className="lg:col-span-6">
             <div className="relative h-80 lg:h-[500px] w-full lg:rounded-4xl overflow-hidden lg:shadow-md">
               <Image
-                src={getImageUrl(
-                  recipe?.image || recipe?.image || recipe?.imageUrl,
-                )}
-                alt={"image"}
+                src={getImageUrl(recipe)}
+                alt={title}
                 fill
                 priority
                 className="object-cover"
@@ -241,8 +244,11 @@ export default function RecipeDetailsPage() {
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <button className="p-2.5 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-gray-800 dark:text-gray-100 hover:bg-white dark:hover:bg-zinc-900 transition-all shadow-sm">
-                  <Bookmark className="w-5 h-5" />
+                <button 
+                  onClick={handleBookmarkClick}
+                  className="p-2.5 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-gray-800 dark:text-gray-100 hover:bg-white dark:hover:bg-zinc-900 transition-all shadow-sm"
+                >
+                  <Bookmark className={`w-5 h-5 ${isSaved ? "fill-[#00A86B] text-[#00A86B]" : ""}`} />
                 </button>
               </div>
             </div>
@@ -326,7 +332,7 @@ export default function RecipeDetailsPage() {
             {/* Desktop Action Button */}
             <div className="max-lg:hidden mt-8">
               <Button
-                path={`/start-cooking/${recipe._id}`}
+                path={`/start-cooking/${recipe._id || recipe.id}`}
                 varients={"primary"}
               >
                 Start Cooking
@@ -339,7 +345,7 @@ export default function RecipeDetailsPage() {
       {/* Floating Bottom Action Button (Mobile Only) */}
       <div className="lg:hidden fixed bottom-6 left-0 right-0 flex justify-center items-center px-6 z-20">
         <div className="w-full max-w-md">
-          <Button path={`/start-cooking/${recipe._id}`} varients={"primary"}>
+          <Button path={`/start-cooking/${recipe._id || recipe.id}`} varients={"primary"}>
             Start Cooking
           </Button>
         </div>

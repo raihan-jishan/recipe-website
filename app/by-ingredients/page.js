@@ -62,7 +62,6 @@ export default function CookByIngredients() {
   return (
     <div className="min-h-screen bg-amber-100/95 text-slate-800 dark:text-slate-100 pb-20 selection:bg-amber-400 selection:text-slate-900 transition-colors duration-300">
       <section className="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        
         {/* Banner Card */}
         <div className="relative overflow-hidden bg-[#FEF6C3] dark:border-slate-800 rounded-4xl p-6 sm:p-8 shadow-xl shadow-amber-900/5 transition-all">
           {/* Card Decorative Chef / Food graphic element */}

@@ -1,8 +1,7 @@
 "use client";
 import { Bookmark, TrendingUp } from "lucide-react";
 import Image from "next/image";
-
-import {   Clock, Plus } from "lucide-react";
+import {   Clock  } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toggleBookmark, isRecipeBookmarked } from "@/utils/bookmark";

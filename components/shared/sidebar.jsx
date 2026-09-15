@@ -91,7 +91,7 @@ export function UserSidebar({ isOpen, onClose, userNavigation = [] }) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="bg-[#F4F5F8]/20 dark:bg-[#0f0f12]/90 backdrop-blur-md h-full w-full rounded-none md:rounded-r-4xl p-5 border-r border-gray-100 dark:border-gray-800/80 flex flex-col justify-between overflow-y-auto scrollbar-none shadow-2xl md:shadow-none">
+        <div className="bg-white dark:bg-[#0f0f12]/90 backdrop-blur-md h-full w-full rounded-none md:rounded-r-4xl p-5 border-r border-gray-100 dark:border-gray-800/80 flex flex-col justify-between overflow-y-auto scrollbar-none shadow-2xl md:shadow-none">
           <div>
             {/* Mobile Close Header */}
             <div className="flex items-center justify-between mb-6 md:hidden">

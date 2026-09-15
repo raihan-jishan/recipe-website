@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { Utensils, Loader2, ChefHat, RotateCw } from "lucide-react";
+import {   Loader2,  RotateCw } from "lucide-react";
 import { RecipeCard } from "@/components/ui/card";
 
 function RecipeSearchContent() {
